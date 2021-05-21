@@ -124,10 +124,6 @@ Notes:
 
 # Rebuild docker image
 
-1. Enable GPU access is needed when building. Follow [steps here](https://stackoverflow.com/questions/59691207/docker-build-with-nvidia-runtime). Ensure
-```
-RUN python3 -c 'import torch; from torch.utils.cpp_extension import CUDA_HOME; print(torch.cuda.is_available(), CUDA_HOME)'
-```
-returns True when building.
+1. Enable GPU access is needed when building. Follow [steps here](https://stackoverflow.com/questions/59691207/docker-build-with-nvidia-runtime). Ensure line 85 in the dockerfile returns True when building.
 2. Download [apex](https://github.com/NVIDIA/apex) and [cocoapi](https://github.com/cocodataset/cocoapi) into `dependencies/apex` and `dependencies/cocoapi` (same level as mega_build, mega.pytorch)
 3. Download any pre-trained checkpoints into `mega.pytorch/checkpoints` if you want. The [official repository](https://github.com/Scalsol/mega.pytorch) contains download links.
