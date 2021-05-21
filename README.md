@@ -12,9 +12,9 @@ The folder structure is split into 4 main parts to layerise the Docker container
 2. **mega_build** (contains mega_core and setup.py) -- copied first and setup.py is run
 3. **mega.pytorch** (contains all other folders and is the work directory) -- copied after mega_core is built
 4. **data** - the data folder in mega.pytorch is empty. Use -v to link with an external data folder. The folder should contain the following subdirectories:
-  1. datasets (for train/test)
-  2. demo (videos or images to predict/demo on)
-  3. output (where output images/videos will be stored)
+    1. datasets (for train/test)
+    2. demo (videos or images to predict/demo on)
+    3. output (where output images/videos will be stored)
 
 Several pre-trained models are provided in the Docker container in `mega.pytorch/checkpoints`, but you can use any models even outside of the container.
 
