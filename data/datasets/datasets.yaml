@@ -1,0 +1,3 @@
+DATASETS:
+  TRAIN: ("VID_custom_train",)
+  TEST: ("VID_custom_val",)

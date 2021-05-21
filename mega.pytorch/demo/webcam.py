@@ -3,6 +3,7 @@ import glob
 import cv2
 import argparse
 import random
+import time
 
 from predictor import VIDDemo
 from mega_core.config import cfg
@@ -10,7 +11,7 @@ from mega_core.config import cfg
 parser = argparse.ArgumentParser(description="PyTorch Object Detection Webcam")
 parser.add_argument(
     "--method",
-    choices=["base", "dff", "fgfa", "rdn", "mega"],
+    choices=["base", "mega"],
     default="base",
     type=str,
     help="which method to use",
@@ -44,6 +45,12 @@ parser.add_argument(
     "--filename",
     default="webcam",
     help="what to name the video file or the image folder result"
+)
+parser.add_argument(
+    "--max-temp-files",
+    help="number of temp images saved to directory (only for mega)",
+    default=3000,
+    type=int
 )
 parser.add_argument(
     "opts",
@@ -83,11 +90,14 @@ vid_demo = VIDDemo(
     output_name=args.filename
 )
 
+start_idx = 0
 idx = 0
 
 visualization_results = []
 
 while True:
+    t1 = time.time()
+
     ret, img_orig = video.read()
     img_cur = vid_demo.perform_transform(img_orig)
 
@@ -115,7 +125,7 @@ while True:
 
         # rest of images
         else:
-            g_idx = random.choice(range(idx))
+            g_idx = random.choice(range(start_idx, idx))
             g_filename = infos["pattern"] % g_idx
             g_img = cv2.imread(infos["img_dir"] % g_filename)
             g_img = vid_demo.perform_transform(g_img)
@@ -129,18 +139,35 @@ while True:
 
         visualization_result = vid_demo.run_on_image(img_orig, infos)
 
-    else:
-        raise ValueError("Only base and mega supported")
+        idx += 1
+        # remove temp files to ensure no build up
+        if args.method == "mega" and idx > args.max_temp_files:
+            os.remove(os.path.join(output_folder, "temp", f"{start_idx:06}.JPEG"))
+            start_idx += 1
+    
+    # add fps to top left corner
+    t2 = time.time()
+    fps = 1 / (t2 - t1)
+    visualization_result = cv2.putText(
+        visualization_result, str(round(fps, 2)), (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1
+    )
 
+    # append to results list and show image
     visualization_results.append(visualization_result)
     cv2.imshow('video', visualization_result)
-
-    idx += 1
 
     if cv2.waitKey(1) == ord('q'):
         break
 
+# generate output images or video
 if args.output_images:
     vid_demo.generate_images(visualization_results)
 if args.output_video:
     vid_demo.generate_video(visualization_results)
+
+# delete temp files
+if args.method == "mega":
+    files = glob.glob(output_folder + "/temp/*")
+    for f in files:
+        os.remove(f)
+    os.rmdir(output_folder + "/temp")

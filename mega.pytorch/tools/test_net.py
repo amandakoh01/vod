@@ -38,7 +38,17 @@ def main():
         metavar="FILE",
         help="path to config file",
     )
-    parser.add_argument("--local_rank", type=int, default=0)
+    parser.add_argument(
+        "--dataset-config-file",
+        default=None,
+        help="path to dataset config file (overrides the other config file)",
+        type=str,
+    )
+    parser.add_argument(
+        "--local_rank", 
+        type=int, 
+        default=0
+    )
     parser.add_argument(
         "--ckpt",
         help="The path to the checkpoint for test, default is the latest checkpoint.",
@@ -50,7 +60,11 @@ def main():
         action="store_true",
         help="if True, evaluate motion-specific iou"
     )
-    parser.add_argument("--master_port", "-mp", type=str, default='29999')
+    parser.add_argument(
+        "--master_port", "-mp", 
+        type=str, 
+        default='29999'
+    )
     parser.add_argument(
         "opts",
         help="Modify config options using the command-line",
@@ -76,6 +90,8 @@ def main():
     cfg.merge_from_file(BASE_CONFIG)
     cfg.merge_from_file(args.config_file)
     cfg.merge_from_list(args.opts)
+    if args.dataset_config_file:
+        cfg.merge_from_file(args.dataset_config_file)
     cfg.freeze()
 
     output_dir = cfg.OUTPUT_DIR

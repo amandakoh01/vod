@@ -35,7 +35,7 @@ parser.add_argument(
 )
 parser.add_argument(
     "--output-folder",
-    default="data/output",
+    default="data/output/demo",
     help="where to store the visulization result.",
 )
 parser.add_argument(

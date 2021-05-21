@@ -149,19 +149,39 @@ def main():
         type=str,
     )
     parser.add_argument(
+        "--dataset-config-file",
+        default=None,
+        help="path to dataset config file (overrides the other config file)",
+        type=str,
+    )
+    parser.add_argument(
         '--launcher',
         choices=['pytorch', 'mpi'],
         default='pytorch',
-        help='job launcher')
-    parser.add_argument("--local_rank", type=int, default=0)
+        help='job launcher'
+    )
+    parser.add_argument(
+        "--local_rank", 
+        type=int, 
+        default=0
+    )
     parser.add_argument(
         "--skip-test",
         dest="skip_test",
         help="Do not test the final model",
         action="store_true",
     )
-    parser.add_argument("--master_port", "-mp", type=str, default='29999')
-    parser.add_argument("--save_name", default="", help="Where to store the log", type=str)
+    parser.add_argument(
+        "--master_port", "-mp", 
+        type=str, 
+        default='29999'
+    )
+    parser.add_argument(
+        "--save_name", 
+        default="", 
+        help="Where to store the log", 
+        type=str
+    )
     parser.add_argument(
         "--motion-specific",
         "-ms",
@@ -189,6 +209,8 @@ def main():
     cfg.merge_from_file(BASE_CONFIG)
     cfg.merge_from_file(args.config_file)
     cfg.merge_from_list(args.opts)
+    if args.dataset_config_file:
+        cfg.merge_from_file(args.dataset_config_file)
 
     output_dir = cfg.OUTPUT_DIR
 
