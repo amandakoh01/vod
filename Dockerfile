@@ -85,8 +85,6 @@ COPY ./mega_build /workspace/mega.pytorch
 RUN python3 -c 'import torch; from torch.utils.cpp_extension import CUDA_HOME; print(torch.cuda.is_available(), CUDA_HOME)'
 RUN cd /workspace/mega.pytorch && python3 setup.py build develop
 
-RUN apt update
-
 COPY ./mega.pytorch /workspace/mega.pytorch
     
 WORKDIR /workspace/mega.pytorch

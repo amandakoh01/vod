@@ -11,6 +11,7 @@ from torchvision.transforms import functional as F
 from mega_core.modeling.detector import build_detection_model
 from mega_core.utils.checkpoint import DetectronCheckpointer
 from mega_core.structures.image_list import to_image_list
+import mega_core.class_labels
 
 from cv2 import (CAP_PROP_FRAME_WIDTH, CAP_PROP_FRAME_HEIGHT, CAP_PROP_FPS,
                  CAP_PROP_FRAME_COUNT, CAP_PROP_FOURCC,
@@ -305,15 +306,7 @@ class Resize(object):
 
 
 class VIDDemo(object):
-    CATEGORIES = ['__background__',  # always index 0
-                  'airplane', 'antelope', 'bear', 'bicycle',
-                  'bird', 'bus', 'car', 'cattle',
-                  'dog', 'domestic_cat', 'elephant', 'fox',
-                  'giant_panda', 'hamster', 'horse', 'lion',
-                  'lizard', 'monkey', 'motorcycle', 'rabbit',
-                  'red_panda', 'sheep', 'snake', 'squirrel',
-                  'tiger', 'train', 'turtle', 'watercraft',
-                  'whale', 'zebra']
+    CATEGORIES = mega_core.class_labels.classes
 
     def __init__(
             self,

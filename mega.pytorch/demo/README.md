@@ -1,46 +1,53 @@
-# Demo Usage
+# Demo
+This repo supports two types of demo:
+1. Demo on existing images/videos on the hard drive (with `demo.py`)
+2. Demo on live webcam stream (with `webcam.py`)
 
-Currently the demo supports visualization for:
-- Image Folder: A set of frames that were decoded from a given video.
-- Video: I only tested `.mp4`, but other video format should be OK.
+## demo.py
+Supports running on a folder of images (default) as well as on a video (`--input-video`) with all methods (base, MEGA, RDN, DFF, FGFA). It can also save results as a folder of images (default) or as a video (`--output-video`).
 
-## Inference on a image folder
+The default output directory is `data/output/demo` and can be customised with `--output-folder`. Filenames can also be customised with `--filename`.
 
-The command line should be like this:
-```shell
-    python demo/demo.py ${METHOD} ${CONFIG_FILE} ${CHECKPOINT_FILE} [--visualize-path ${IMAGE-FOLDER}] [--suffix ${IMAGE_SUFFIX}][--output-folder ${FOLDER}] [--output-video]
-``` 
-Example:
-```shell
-    python demo/demo.py base configs/vid_R_101_C4_1x.yaml R_101.pth --suffix ".JPEG"\
-        --visualize-path datasets/ILSVRC2015/Data/VID/val/ILSVRC2015_val_00003001 \
-        --output-folder visualization [--output-video]
+### Example codes:
+
+**Image input** (provide path to image folder with `--data-path`, and the suffix of images with `--suffix`), and **image output**. Images are saved into the folder `output-folder/filename/`.
 ```
-This will generate visualization result using single frame baseline with ResNet-101 backbone. And the results, images with generated bboxes, are saved in folder `visualization`. 
-
-Please note that:
-1) If your want to use other methods like MEGA, FGFA, please change METHOD `base` to `mega` or `fgfa`. Currently all methods support visualization, see [`demo.py`](demo.py) for more information about using other methods.
-2) Don't forget to modify CONFIG_FILE and CHECKPOINT_FILE accordingly!
-3) Add `--output-video` to generate video instead of set of images, the video is encoded at `25` fps by default.
-4) If you want to visualize your own image folder, please make sure that the name of your images is like `XXXXXX.jpg`. `XXXXXX` is the frame number of current frame, e.g., `000000` is the first frame. `.jpg` could be replaced by other common image suffix like `.png`, which could be specified by `--suffix.`
-
-## Inference on a video
-
-The command line should be like this:
-```shell
-    python demo/demo.py ${METHOD} ${CONFIG_FILE} ${CHECKPOINT_FILE} --video [--visualize-path ${VIDEO-NAME}] [--output-folder ${FOLDER}] [--output-video]
-``` 
-Example:
-```shell
-    python demo/demo.py base configs/vid_R_101_C4_1x.yaml R_101.pth --video \
-        --visualize-path datasets/ILSVRC2015/Data/VID/snippets/val/ILSVRC2015_val_00003001.mp4 \
-        --output-folder visualization [--output-video]
+python3 demo/demo.py \
+    --method mega --config configs/MEGA/vid_R_101_C4_1x.yaml --checkpoint checkpoints/MEGA_R_101.pth \
+    --data-path data/demo/dog --suffix ".jpg" \
+    --filename dog
 ```
-This will generate visualization result using single frame baseline with ResNet-101 backbone. And the results, images with generated bboxes, are saved in folder `visualization`. 
 
-Please note that:
-1) All you should know about has given above.
+**Video input** (provide path to video file with `data-path`), and **video output**. Video is saved as `output-folder/filename.avi`.
+```
+python3 demo/demo.py \
+    --method mega --config configs/MEGA/vid_R_101_C4_1x.yaml --checkpoint checkpoints/MEGA_R_101.pth \
+    --input-video --data-path data/demo/dog.mp4 \
+    --output-video --filename dog
+```
 
-## Misc
+## webcam.py
+Supports running detection on a live webcam stream using only **MEGA or base**. Streams video recording with detection in real time, and also has the option of saving results as images (`--output-images`) or as a video (`--output-video`).
 
-Nothing more is needed?
+The default output directory is `data/output/webcam` and can be customised with `--output-folder`. Filenames can also be customised with `--filename`.
+
+Press `q` at any point to end the stream.
+
+### Example codes:
+
+**Base** (single-frame detector). No output is saved to storage, only shown in real time.
+```
+python3 demo/webcam.py \
+    --method base --config configs/BASE/vid_R_101_C4_1x.yaml --checkpoint checkpoints/BASE_R_101.pth
+```
+
+**MEGA**. Note the last line adjusts the offsets to enable online detection. Both a folder of images and a video will be saved at the end of the stream, with the same naming convention as in `demo.py`.
+
+Since MEGA requires past frames to be saved to use as support frames, the setting `--max-temp-files` controls how many frames are saved before frames start to be deleted (from the front). This is especially important if detector will run for long periods at a time.
+```
+python3 demo/webcam.py \
+    --method mega --config configs/MEGA/vid_R_101_C4_1x.yaml --checkpoint checkpoints/MEGA_R_101.pth \
+    --output-video --output-images \
+    --filename mega_test \
+    MODEL.VID.MEGA.MIN_OFFSET -24 MODEL.VID.MEGA.MAX_OFFSET 0 MODEL.VID.MEGA.KEY_FRAME_LOCATION 24
+```
