@@ -6,6 +6,12 @@ Forked from [official MEGA repository](https://github.com/Scalsol/mega.pytorch).
 2. Online webcam demo
 3. Simplified built-in custom dataset implementation
 
+**Comparison between base (single frame) and MEGA:**
+
+Using models trained on ImageNet VID dataset provided in the original repository. Click to watch the video:
+
+[![Comparison between base and MEGA](https://img.youtube.com/vi/6QhBh2Vhzr8/0.jpg)](https://www.youtube.com/watch?v=6QhBh2Vhzr8)
+
 ## Using the repo
 The folder structure is split into 4 main parts to layerise the Docker container:
 1. **dependencies** -- copied and installed first
