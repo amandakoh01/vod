@@ -2,7 +2,7 @@
 Forked from [official MEGA repository](https://github.com/Scalsol/mega.pytorch).
 
 **Additions:**
-1. Docker container
+1. Docker container - [download here](https://mega.nz/file/owRlFKxD#80DyRrSSBYPEcNNF2JS1AU-ciKbJeS-gmTqfzjw304o)
 2. Online webcam demo
 3. Simplified built-in custom dataset implementation
 
